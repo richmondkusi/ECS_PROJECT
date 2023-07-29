@@ -1,28 +1,28 @@
-
 pipeline {
-
- agent any
- stages {
- stage('Checkout') {
- steps {
-  checkout([$class: 'GitSCM', branches: [[name: 
+  
+  agent any
+  
+  stages {
+    stage('Checkout') {
+      steps {
+      checkout([$class: 'GitSCM', branches: [[name: 
  '*/main']], extensions: [], userRemoteConfigs: [[url: 
- 'https://github.com/richmondkusi/ECS_PROJECT.git']]]) 
- }
- }
+ 'https://github.com/richmondkusi/ECS-PRODUCTION.git']]]) 
+     }
+    }
  
- stage ("terraform init") {
- steps {
- sh ('terraform init') 
- }
- }
+    stage ("terraform init") {
+      steps {
+        sh ('terraform init') 
+     }
+    }
  
- stage ("terraform Action") {
- steps {
- echo "Terraform action is --> ${action}"
- sh ('terraform ${action} --auto-approve') 
- }
- }
+    stage ("terraform Action") {
+      steps {
+        echo "Terraform action is --> ${action}"
+        sh ('terraform ${action} --auto-approve') 
+     }
+    }
  
  }
 }
