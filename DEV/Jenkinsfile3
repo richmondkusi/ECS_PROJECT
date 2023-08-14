@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+
+    parameters {
+        choice(choices: ['Apply', 'Destroy'], description: 'Select whether to Apply or Destroy infrastructure', name: 'ACTION')
+        choice(choices: ['DEV', 'PROD', 'TEST', 'STAGING'], description: 'Select the environment staging', name: 'ENVIRONMENT')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Terraform Setup') {
+            steps {
+                script {
+                    sh 'terraform init'
+                }
+            }
+        }
+
+        stage('Terraform Action') {
+            steps {
+                script {
+                    if (params.ACTION == 'Apply') {
+                        sh "terraform apply -var 'environment=${params.ENVIRONMENT}'"
+                    } else if (params.ACTION == 'Destroy') {
+                        sh "terraform destroy -var 'environment=${params.ENVIRONMENT}' -auto-approve"
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Pipeline executed successfully!"
+        }
+        failure {
+            echo "Pipeline execution failed!"
+        }
+    }
+}
